@@ -34,6 +34,7 @@ url: `http://127.0.0.1:5000/api/query?title=${encodeURIComponent(question)}&opti
 - 可能存在 “完成作业” 提交不上去的问题，进行 __网页刷新__ 即可解决
 
 # BACEKEND
+- 主要是参考 https://github.com/Miaozeqiu/ai-ocs-question_bank ，自己也就稍微修改了一下地方。
 - 基于Flask的RESTful API服务
 - 多AI模型集成（火山引擎/阿里百炼/硅基引擎）
 - MySQL数据库缓存答案
@@ -48,8 +49,6 @@ url: `http://127.0.0.1:5000/api/query?title=${encodeURIComponent(question)}&opti
 - 跨域支持：支持跨域请求，方便前端调用
 
 ## 快速开始
-
-### 后端部署
 
 ### 1. 安装依赖
 ```bash
