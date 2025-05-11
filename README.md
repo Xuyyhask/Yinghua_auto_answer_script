@@ -50,7 +50,7 @@ url: `http://127.0.0.1:5000/api/query?title=${encodeURIComponent(question)}&opti
 
 ## 快速开始
 
-- 在 'backend' 文件里面也有
+- 在 `backend` 文件里面也有
 
 ###  配置文件
 创建 `config.json` 文件并配置：
