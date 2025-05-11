@@ -3,16 +3,18 @@
 ## 项目介绍
 这是一个基于前后端分离架构的智能题库系统，包含多平台自动答题脚本和智能答案查询API服务。系统支持多种AI模型（火山引擎/阿里百炼/硅基引擎）自动回答问题，并提供高效的答案缓存和查询服务。
 
+## 环境要求
+- Python 3.8+
+- MySQL 5.7+（可选，支持无数据库模式）
+- Node.js（前端脚本开发）
+- Tampermonkey浏览器插件
+
 # FRONTEND
 - 支持多个在线教育平台的自动答题脚本
   - 雨课堂自动答题助手
   - 樱花在线教育平台答题助手
 - 基于Tampermonkey的浏览器插件形式
 - 统一的日志系统和用户界面
-
-## 安装要求
-- 浏览器安装Tampermonkey扩展
-- 脚本的使用网址（@match ）得根据自己需要更改
 
 ## 使用方法
 1. 安装Tampermonkey浏览器扩展
@@ -45,17 +47,11 @@ url: `http://127.0.0.1:5000/api/query?title=${encodeURIComponent(question)}&opti
 - RESTful API：标准的API设计，易于集成
 - 跨域支持：支持跨域请求，方便前端调用
 
-## 环境要求
-- Python 3.8+
-- MySQL 5.7+（可选，支持无数据库模式）
-- Node.js（前端脚本开发）
-- Tampermonkey浏览器插件
-
 ## 快速开始
 
 ### 后端部署
 
-1. 安装依赖
+### 1. 安装依赖
 ```bash
 cd backend/ai-ocs-question_bank-main
 pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
