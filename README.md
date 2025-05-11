@@ -50,13 +50,9 @@ url: `http://127.0.0.1:5000/api/query?title=${encodeURIComponent(question)}&opti
 
 ## 快速开始
 
-### 1. 安装依赖
-```bash
-cd backend/ai-ocs-question_bank-main
-pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
-```
+- 在 'backend' 文件里面也有
 
-### 2. 配置文件
+###  配置文件
 创建 `config.json` 文件并配置：
 ```json
 {
@@ -73,7 +69,7 @@ pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 }
 ```
 
-### 3. 启动服务
+###  启动服务
 ```bash
 python app.py
 ```
