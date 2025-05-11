@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         自动答题PRO
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      1.0
 // @description  自动答题
 // @author       XXX
 // @match        https://mooc.kmcc.edu.cn/user/work*
