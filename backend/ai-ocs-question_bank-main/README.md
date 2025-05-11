@@ -28,6 +28,11 @@ pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 - port: API服务器端口
 - api_key: 硅基流动/火山引擎/阿里百炼 API密钥
 
+## 如何使用不同模型
+只需修改 volcengine 就行
+```bash
+from utils.volcengine import query_large_model  # 添加导入AI模型查询函数
+```
 
 ## 如何运行
  __有数据库的版本__ 
@@ -44,6 +49,3 @@ python main_non_database.py
 ```bash
 python test_api.py
 ```
-
-
-
