@@ -4,10 +4,11 @@
 这是一个基于前后端分离架构的智能题库系统，包含多平台自动答题脚本和智能答案查询API服务。系统支持多种AI模型（火山引擎/阿里百炼/硅基引擎）自动回答问题，并提供高效的答案缓存和查询服务。
 
 ## 环境要求
+- Tampermonkey浏览器插件
+- （也可无需自己搭建后端使用 https://zerror.neoregion.cn/ 的软件或者在线题库也行）
 - Python 3.8+
 - MySQL 5.7+（可选，支持无数据库模式）
 - Node.js（前端脚本开发）
-- Tampermonkey浏览器插件
 
 # FRONTEND
 - 支持多个在线教育平台的自动答题脚本
@@ -16,7 +17,7 @@
 - 基于Tampermonkey的浏览器插件形式
 
 ## 使用方法
-1. 安装Tampermonkey浏览器扩展
+1. 安装Tampermonkey浏览器扩展（如若不会去b站搜索）
 2. 添加此脚本到Tampermonkey
 3. 修改脚本的url,url格式如下：
 ```bash
@@ -24,7 +25,7 @@ url: `http://127.0.0.1:5000/api/query?title=${encodeURIComponent(question)}&opti
 
 ```  
 > url可以支持ocs和ze提供的题库url
-如果使用ocs和ze提供的题库url，在url里面加入token就行：
+在url里面加入token就行：
 ```bash
 url: `https://api.zaizhexue.top/api/query?token=12345678910&title=${encodeURIComponent(question)}&options=${encodeURIComponent(JSON.stringify(options))}&type=${encodeURIComponent(type)}`，
 
@@ -38,7 +39,9 @@ url: `https://api.zaizhexue.top/api/query?token=12345678910&title=${encodeURICom
 - 可能存在 “完成作业” 提交不上去的问题，进行 __网页刷新__ 即可解决
 
 # BACEKEND
+- 后端主要提供获得答案功能，如果觉得配后端麻烦，可以使用 https://zerror.neoregion.cn/ 提供的免费ai查询软件，或者使用他的在线题库（直接替换url就行了）。
 - 主要是参考 https://github.com/Miaozeqiu/ai-ocs-question_bank ，自己也就稍微修改了一下地方。
+  
 - 基于Flask的RESTful API服务
 - 多AI模型集成（火山引擎/阿里百炼/硅基引擎）
 - MySQL数据库缓存答案
@@ -114,13 +117,7 @@ python app.py
 2. 推荐使用 Supervisor 管理进程
 3. 生产环境建议开启日志记录
 
-## 常见问题
-1. 如何修改服务端口？
-   - 在 config.json 中修改 port 值
-
-2. 如何配置数据库？
-   - 修改 config.json 中的 database 配置项
-
+## 后端使用下来基本没什么问题
 
 ## 注意事项
 - 本脚本系统仅供学习和研究使用
