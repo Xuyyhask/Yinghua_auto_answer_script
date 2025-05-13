@@ -17,7 +17,7 @@
 - 基于Tampermonkey的浏览器插件形式
 
 ## 使用方法
-1. 安装Tampermonkey浏览器扩展（如若不会去b站搜索）
+1. 安装Tampermonkey浏览器扩展
 2. 添加此脚本到Tampermonkey
 3. 修改脚本的url,url格式如下：
 ```bash
