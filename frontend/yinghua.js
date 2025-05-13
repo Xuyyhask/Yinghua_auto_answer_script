@@ -4,12 +4,8 @@
 // @version      2.0
 // @description  自动答题
 // @author       AAAcon
-// @match        https://mooc.kmcc.edu.cn/user/work*
-// @match        https://mooc.kmcc.edu.cn/user/work/doWork*
-// @match        https://mooc.kmcc.edu.cn/user/work/submit*
-// @match        https://mooc.kmcc.edu.cn/user/node*
-// @match        https://kmcc.zjxkeji.com/user/work*
-// @match        https://kmcc.zjxkeji.com/user/node*
+// @match        *://*/user/work*
+// @match        *://*/user/node*
 // @match        *://*/user/exam*
 // @grant        GM_xmlhttpRequest
 // @grant        GM_openInTab
@@ -444,6 +440,51 @@
         }, 0);
     }
 
+    // 添加自动答题初始化函数
+    function initAutoAnswer() {
+
+        // 检查当前页面是否是答题页面
+        if (window.location.href.includes('/user/work') || window.location.href.includes('/user/exam')) {
+            console.log('检测到是答题页面');
+
+            // 处理开始答题页面
+            async function handleStartPage() {
+                // 使用更精确的选择器
+                await waitForElement('#startArea #start-btn.start-work' || '#startArea #start-btn.start-exam', () => {
+                    console.log('找到开始答题按钮');
+                    const startBtn = document.querySelector('#startArea #start-btn.start-work');
+                    const startBt = document.querySelector('#startArea #start-btn.start-exam');
+                    if (startBtn || startBt) {
+                        startBtn.click();
+                        startBtn.click();
+                        console.log('点击开始答题按钮');
+                    }
+                });
+
+                // 等待确认弹窗出现
+                await waitForElement('.layui-layer-btn0', () => {
+                    console.log('找到确认弹窗');
+                    const confirmBtn = document.querySelector('.layui-layer-btn0');
+                    if (confirmBtn) {
+                        setTimeout(() => {
+                            confirmBtn.click();
+                            console.log('点击确认按钮');
+                        }, randomDelay());
+                    }
+                });
+
+                // 等待题目加载完成后开始答题
+                await waitForElement('.topic-item', () => {
+                    console.log('答题页面加载完成，自动开始答题');
+                    autoAnswer();
+                });
+
+            }
+            // 开始执行
+            handleStartPage();
+        }
+    }
+
     // 等待页面加载完成
     function waitForElement(selector, callback) {
         if (document.querySelector(selector)) {
@@ -620,6 +661,8 @@
             }
         }
 
+        const randomDelay = () => Math.floor(Math.random() * 2000) + 2000;
+
         // 提交按钮
         const submitBtn = currentQuestion.querySelector('.next_exam');
         if (submitBtn) {
@@ -700,48 +743,6 @@
         }
     }
 
-    // 添加自动答题初始化函数
-    function initAutoAnswer() {
-
-        // 检查当前页面是否是答题页面
-        if (window.location.href.includes('/user/work') || window.location.href.includes('/user/exam')) {
-            console.log('检测到是答题页面');
-
-            // 处理开始答题页面
-            async function handleStartPage() {
-                // 使用更精确的选择器
-                await waitForElement('#startArea #start-btn.start-work', () => {
-                    console.log('找到开始答题按钮');
-                    const startBtn = document.querySelector('#startArea #start-btn.start-work');
-                    if (startBtn) {
-                        startBtn.click();
-                        console.log('点击开始答题按钮');
-                    }
-                });
-
-                // 等待确认弹窗出现
-                await waitForElement('.layui-layer-btn0', () => {
-                    console.log('找到确认弹窗');
-                    const confirmBtn = document.querySelector('.layui-layer-btn0');
-                    if (confirmBtn) {
-                        setTimeout(() => {
-                            confirmBtn.click();
-                            console.log('点击确认按钮');
-                        }, randomDelay());
-                    }
-                });
-
-                // 等待题目加载完成后开始答题
-                await waitForElement('.topic-item', () => {
-                    console.log('work答题页面加载完成，自动开始答题');
-                    autoAnswer();
-                });
-
-            }
-            // 开始执行
-            handleStartPage();
-        }
-    }
     // 在脚本开始时调用
     setTimeout(initAutoAnswer, 1000);
 
