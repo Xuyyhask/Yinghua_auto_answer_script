@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         自动答题PRO
+// @name         英华自动答题PRO
 // @namespace    http://tampermonkey.net/
 // @version      2.0
-// @description  自动答题
+// @description  英华自动答题
 // @author       AAAcon
 // @match        *://*/user/work*
 // @match        *://*/user/node*
