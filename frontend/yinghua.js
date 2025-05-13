@@ -1,26 +1,27 @@
 // ==UserScript==
 // @name         自动答题PRO
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      2.0
 // @description  自动答题
-// @author       XXX
+// @author       AAAcon
 // @match        https://mooc.kmcc.edu.cn/user/work*
 // @match        https://mooc.kmcc.edu.cn/user/work/doWork*
 // @match        https://mooc.kmcc.edu.cn/user/work/submit*
 // @match        https://mooc.kmcc.edu.cn/user/node*
 // @match        https://kmcc.zjxkeji.com/user/work*
 // @match        https://kmcc.zjxkeji.com/user/node*
+// @match        *://*/user/exam*
 // @grant        GM_xmlhttpRequest
 // @grant        GM_openInTab
 // ==/UserScript==
 
 (function() {
     'use strict';
-    
+
     // 在脚本开始时初始化日志系统
     window.unifiedWindow = createUnifiedWindow();
     const logger = createLogger();
-    
+
     // 创建一个新的代理对象来处理控制台输出
     const consoleProxy = new Proxy(console, {
         get: function(target, property) {
@@ -46,13 +47,27 @@
     // 替换全局 console 对象
     window.console = consoleProxy;
 
-    // 在初始化完成后自动切换到日志标签
+    // 确保在所有初始化完成后再切换到日志标签
     setTimeout(() => {
-        const logTab = document.querySelector('button[textContent="运行日志"]');
-        if (logTab) {
-            logTab.click();
+        const { logContent } = window.unifiedWindow;
+        if (logContent) {
+            logContent.style.display = 'block';
+            const testInfoContent = window.unifiedWindow.testInfoContent;
+            if (testInfoContent) {
+                testInfoContent.style.display = 'none';
+            }
+            // 更新标签样式
+            const logTab = document.querySelector('button');
+            const testTab = document.querySelectorAll('button')[0];
+            if (logTab && testTab) {
+                logTab.style.background = '#1890ff';
+                logTab.style.color = 'white';
+                testTab.style.background = '#f5f5f5';
+                testTab.style.color = '#666';
+            }
+            console.log('日志页面已初始化并显示');
         }
-    }, 100);
+    }, 500);
 
     // 自动寻找测试章节的脚本
     // 修改 findTestSections 函数为异步函数
@@ -131,14 +146,14 @@
         }
     }, 1000);
 
-    
+
     // 修改 createLogger 函数
     function createLogger() {
         if (!window.unifiedWindow) {
             window.unifiedWindow = createUnifiedWindow();
         }
         const { logContent } = window.unifiedWindow;
-        
+
         logContent.style.cssText = `
             display: none;
             max-height: 350px;
@@ -149,7 +164,7 @@
             padding: 15px;
             color: #fff;
         `;
-        
+
         // 添加清空按钮
         const clearButton = document.createElement('button');
         clearButton.textContent = '清空日志';
@@ -167,7 +182,7 @@
             logContent.appendChild(clearButton);
         };
         logContent.appendChild(clearButton);
-        
+
         return {
             log: (message, type = 'info') => {
                 const time = new Date().toLocaleTimeString();
@@ -211,7 +226,7 @@
             backdrop-filter: blur(10px);
             background: rgba(255, 255, 255, 0.95);
         `;
-        
+
         // 创建标题栏
         const header = document.createElement('div');
         header.style.cssText = `
@@ -222,17 +237,17 @@
             padding-bottom: 10px;
             border-bottom: 1px solid #eee;
         `;
-        
+
         // 创建标签切换按钮
         const tabs = document.createElement('div');
         tabs.style.cssText = `
             display: flex;
             gap: 10px;
         `;
-        
+
         const testTab = document.createElement('button');
         const logTab = document.createElement('button');
-        
+
         const tabStyle = `
             padding: 6px 12px;
             border: none;
@@ -241,16 +256,16 @@
             font-size: 14px;
             transition: all 0.3s;
         `;
-        
+
         testTab.textContent = '测试章节';
         logTab.textContent = '运行日志';
         testTab.style.cssText = tabStyle;
         logTab.style.cssText = tabStyle;
-        
+
         tabs.appendChild(testTab);
         tabs.appendChild(logTab);
         header.appendChild(tabs);
-        
+
         // 创建关闭按钮
         const closeButton = document.createElement('button');
         closeButton.innerHTML = '×';
@@ -265,19 +280,19 @@
         `;
         closeButton.onclick = () => container.remove();
         header.appendChild(closeButton);
-        
+
         container.appendChild(header);
-        
+
         // 创建内容区域
         const testInfoContent = document.createElement('div');
         const logContent = document.createElement('div');
-        
+
         testInfoContent.style.display = 'block';
         logContent.style.display = 'none';
-        
+
         container.appendChild(testInfoContent);
         container.appendChild(logContent);
-        
+
         // 标签切换功能
         testTab.onclick = () => {
             testTab.style.background = '#1890ff';
@@ -287,7 +302,7 @@
             testInfoContent.style.display = 'block';
             logContent.style.display = 'none';
         };
-        
+
         logTab.onclick = () => {
             logTab.style.background = '#1890ff';
             logTab.style.color = 'white';
@@ -296,12 +311,12 @@
             testInfoContent.style.display = 'none';
             logContent.style.display = 'block';
         };
-        
-        // 初始状态
-        testTab.click();
-        
+
+        // 初始状态 - 修改这里，默认显示日志页面
+        logTab.click();
+
         document.body.appendChild(container);
-        
+
         return {
             container,
             testInfoContent,
@@ -312,12 +327,12 @@
     // 修改 displayTestInfo 函数
     function displayTestInfo(tests) {
         const { testInfoContent } = window.unifiedWindow || createUnifiedWindow();
-        
+
         if (tests.length === 0) {
             testInfoContent.innerHTML = '<p style="color: #ff4d4f; font-size: 14px; text-align: center;">未找到可用的测试章节</p>';
             return;
         }
-        
+
         let html = '<h3 style="margin: 0 0 15px 0; color: #1a1a1a; font-size: 16px;">找到的测试章节：</h3>';
         html += `
             <div style="margin-bottom: 20px;">
@@ -491,7 +506,7 @@
     // 答题逻辑函数
     async function continueAnswer() {
         // 获取当前显示的题目
-        const currentQuestion = document.querySelector('.topic-item[style=""]') || document.querySelector('.topic-item:not([style*="none"])');
+        const currentQuestion = document.querySelector('.topic-item[style=""]') || document.querySelector('.topic-item:not([style*="none"])') || document.querySelector('.topic-item topic-type-1[style=""]');
 
         if (!currentQuestion) {
             const completeBtn = document.querySelector('.complete');
@@ -503,8 +518,16 @@
         }
 
         // 获取题目信息
-        const questionType = currentQuestion.querySelector('.type').textContent.trim();
-        const questionText = currentQuestion.querySelector('.name').textContent.trim();
+        const typeElement = currentQuestion.querySelector('.type');
+        const nameElement = currentQuestion.querySelector('.name');
+
+        if (!typeElement || !nameElement) {
+            console.error('无法找到题目类型或题目内容元素');
+            return;
+        }
+
+        const questionType = typeElement.textContent.trim();
+        const questionText = nameElement.textContent.trim();
 
         // 获取所有选项
         const options = currentQuestion.querySelectorAll('.exam-inp');
@@ -512,10 +535,14 @@
 
         // 构建选项数组
         const optionsArray = Array.from(options).map(option => {
-            const text = option.parentElement.querySelector('.txt').textContent.trim();
+            const textElement = option.parentElement.querySelector('.txt');
+            if (!textElement) {
+                console.error('无法找到选项文本元素');
+                return { value: option.value, text: '' };
+            }
             return {
                 value: option.value,
-                text: text
+                text: textElement.textContent.trim()
             };
         });
 
@@ -566,7 +593,7 @@
                 }
                 // 如果没有找到答案,使用随机选择
                 if(!answerSlect){
-                    console.log('未找到答案,使用随机答案');
+                    console.log('未批配答案,使用随机答案');
                     const selectedCount = Math.floor(Math.random() * 3) + 1;
                     const shuffled = Array.from(options).sort(() => 0.5 - Math.random());
                     for (let i = 0; i < selectedCount; i++) {
@@ -614,9 +641,21 @@
 
         return new Promise((resolve, reject) => {
             console.log('正在查询答案...');
+
+            // 清理题目文本中的特殊字符
+            const cleanTitle = question.trim()
+                .replace(/\s+/g, ' ')  // 将多个空格替换为单个空格
+                .replace(/\xa0/g, ' '); // 替换特殊空格字符
+
+            // 标准化处理选项数据
+            const formattedOptions = options.map(opt => ({
+                value: opt.value.trim(),
+                text: opt.text.trim()
+            }));
+
             GM_xmlhttpRequest({
                 method: 'GET',
-                url: `（这个得需要自己配置，后续我会上传到仓库里面的,目前只是一个主要的油猴脚本，如果你懂一些ocs或者ze的题库配置也可替换这个url）?title=${encodeURIComponent(question)}&options=${encodeURIComponent(JSON.stringify(options))}&type=${encodeURIComponent(type)}`,
+                url: `http://127.0.0.1:5000/api/query?title=${encodeURIComponent(cleanTitle)}&options=${encodeURIComponent(JSON.stringify(formattedOptions))}&type=${encodeURIComponent(type)}`,
                 onload: function(response) {
                     try {
                         const result = JSON.parse(response.responseText);
@@ -661,12 +700,12 @@
         }
     }
 
-    // 添加新的自动答题初始化函数
+    // 添加自动答题初始化函数
     function initAutoAnswer() {
 
         // 检查当前页面是否是答题页面
-        if (window.location.href.includes('/user/work')) {
-            console.log('检测到答题页面，准备开始自动答题');
+        if (window.location.href.includes('/user/work') || window.location.href.includes('/user/exam')) {
+            console.log('检测到是答题页面');
 
             // 处理开始答题页面
             async function handleStartPage() {
@@ -694,21 +733,21 @@
 
                 // 等待题目加载完成后开始答题
                 await waitForElement('.topic-item', () => {
-                    console.log('答题页面加载完成，自动开始答题');
+                    console.log('work答题页面加载完成，自动开始答题');
                     autoAnswer();
                 });
-            }
 
+            }
             // 开始执行
             handleStartPage();
         }
     }
-    // 在脚本初始化时调用
+    // 在脚本开始时调用
     setTimeout(initAutoAnswer, 1000);
 
     // 自动执行
     setTimeout(findAndShowTests, 1000);
-    
+
     // 在需要记录日志的地方使用
     logger.log('初始化完成', 'info');
 
