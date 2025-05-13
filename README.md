@@ -11,10 +11,9 @@
 
 # FRONTEND
 - 支持多个在线教育平台的自动答题脚本
-  - 雨课堂自动答题助手
-  - 樱花在线教育平台答题助手
+  - 雨课堂
+  - 英华在线
 - 基于Tampermonkey的浏览器插件形式
-- 统一的日志系统和用户界面
 
 ## 使用方法
 1. 安装Tampermonkey浏览器扩展
@@ -25,6 +24,11 @@ url: `http://127.0.0.1:5000/api/query?title=${encodeURIComponent(question)}&opti
 
 ```  
 > url可以支持ocs和ze提供的题库url
+如果使用ocs和ze提供的题库url，在url里面加入token就行：
+```bash
+url: `https://api.zaizhexue.top/api/query?token=12345678910&title=${encodeURIComponent(question)}&options=${encodeURIComponent(JSON.stringify(options))}&type=${encodeURIComponent(type)}`，
+
+```  
 4. 访问英华平台的课程页面
 ![示例图片](./example.png)   
 5. 脚本会自动运行做题并在页面右上角显示浮动窗口
