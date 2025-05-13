@@ -3,6 +3,8 @@
 ## 项目介绍
 这是一个基于前后端分离架构的智能题库系统，包含多平台自动答题脚本和智能答案查询API服务。系统支持多种AI模型（火山引擎/阿里百炼/硅基引擎）自动回答问题，并提供高效的答案缓存和查询服务。
 
+< 如需刷英华课去这个链接 https://github.com/aoaostar/mooc/releases/tag/v1.3.2
+
 ## 环境要求
 - Tampermonkey浏览器插件
 - （也可无需自己搭建后端使用 https://zerror.neoregion.cn/ 的软件或者在线题库也行）
@@ -23,7 +25,8 @@
 ```bash
 url: `http://127.0.0.1:5000/api/query?title=${encodeURIComponent(question)}&options=${encodeURIComponent(JSON.stringify(options))}&type=${encodeURIComponent(type)}`,
 
-```  
+```
+
 > url可以支持ocs和ze提供的题库url
 在url里面加入token就行：
 ```bash
