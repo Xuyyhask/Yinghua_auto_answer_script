@@ -76,11 +76,12 @@
             const chapterName = group.querySelector('.name a')?.getAttribute('title') || '';
             const items = group.querySelectorAll('.list .item a');
 
-            let homeworkItem = Array.from(items).find(item => item.textContent.includes('章节作业'));
-            if (!homeworkItem) {
-                homeworkItem = Array.from(items).find(item => item.textContent.includes('章'));
-                if (!homeworkItem) return;
-            }
+            const itemsArray = Array.from(items);
+            const homeworkItem = itemsArray.find(item => item.textContent.includes('章节作业')) ||
+                                itemsArray.find(item => item.textContent.includes('章'))||
+                                itemsArray.find(item => item.textContent.includes('考试'));
+
+            if (!homeworkItem) return;
 
             // 将每个 fetch 操作添加到 promises 数组中
             promises.push(
@@ -207,7 +208,7 @@
         container.style.cssText = `
             position: fixed;
             top: 20px;
-            right: 20px;
+            right: 30px;
             width: 300px;
             max-height: 80vh;
             background: white;
@@ -222,7 +223,31 @@
             backdrop-filter: blur(10px);
             background: rgba(255, 255, 255, 0.95);
         `;
-
+    
+        // 创建最小化按钮
+        const mini = document.createElement('div');
+        mini.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid #eee;
+            border-radius: 12px;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 9999;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            font-size: 12px;
+            text-align: center;
+            line-height: 1.2;
+        `;
+        mini.innerHTML = '刷课<br>助手';
+        document.body.appendChild(mini);
+    
         // 创建标题栏
         const header = document.createElement('div');
         header.style.cssText = `
@@ -232,18 +257,20 @@
             margin-bottom: 15px;
             padding-bottom: 10px;
             border-bottom: 1px solid #eee;
+            cursor: move;
         `;
-
+    
         // 创建标签切换按钮
         const tabs = document.createElement('div');
         tabs.style.cssText = `
             display: flex;
             gap: 10px;
         `;
-
+    
         const testTab = document.createElement('button');
         const logTab = document.createElement('button');
-
+        const minimizeBtn = document.createElement('button');
+    
         const tabStyle = `
             padding: 6px 12px;
             border: none;
@@ -252,20 +279,13 @@
             font-size: 14px;
             transition: all 0.3s;
         `;
-
+    
         testTab.textContent = '测试章节';
         logTab.textContent = '运行日志';
+        minimizeBtn.innerHTML = '−';  // 修改最小化按钮的文本为减号符号
         testTab.style.cssText = tabStyle;
         logTab.style.cssText = tabStyle;
-
-        tabs.appendChild(testTab);
-        tabs.appendChild(logTab);
-        header.appendChild(tabs);
-
-        // 创建关闭按钮
-        const closeButton = document.createElement('button');
-        closeButton.innerHTML = '×';
-        closeButton.style.cssText = `
+        minimizeBtn.style.cssText = `
             background: none;
             border: none;
             font-size: 20px;
@@ -273,22 +293,142 @@
             color: #999;
             padding: 0 5px;
             &:hover { color: #666; }
-        `;
-        closeButton.onclick = () => container.remove();
-        header.appendChild(closeButton);
-
+        `;  // 使用与原关闭按钮相同的样式
+    
+        tabs.appendChild(testTab);
+        tabs.appendChild(logTab);
+        header.appendChild(tabs);
+        header.appendChild(minimizeBtn);  // 将最小化按钮移到header右侧
+    
         container.appendChild(header);
-
+    
         // 创建内容区域
         const testInfoContent = document.createElement('div');
         const logContent = document.createElement('div');
-
+    
         testInfoContent.style.display = 'block';
         logContent.style.display = 'none';
-
+    
         container.appendChild(testInfoContent);
         container.appendChild(logContent);
-
+    
+        // 添加拖拽功能
+        let moveFlag = false;
+        let isDragging = false;
+        let startX, startY;
+    
+        function handleDragStart(e) {
+            if (e.target.tagName.toLowerCase() === 'button') return;
+            isDragging = true;
+            
+            // 获取鼠标在元素内的相对位置
+            const rect = container.getBoundingClientRect();
+            startX = e.clientX - rect.left;
+            startY = e.clientY - rect.top;
+            
+            // 添加拖拽时的样式
+            container.style.transition = 'none';
+            container.style.cursor = 'move';
+            document.body.style.userSelect = 'none';
+            
+            e.preventDefault();
+        }
+    
+        function handleDrag(e) {
+            if (!isDragging) return;
+            moveFlag = true;
+            
+            // 直接使用鼠标位置减去偏移量
+            let newX = e.clientX - startX;
+            let newY = e.clientY - startY;
+            
+            // 边界检查
+            newX = Math.max(0, Math.min(newX, window.innerWidth - container.offsetWidth));
+            newY = Math.max(0, Math.min(newY, window.innerHeight - container.offsetHeight));
+            
+            // 直接设置位置，不使用transform
+            container.style.left = `${newX}px`;
+            container.style.top = `${newY}px`;
+            
+            e.preventDefault();
+        }
+    
+        function handleDragEnd() {
+            if (!isDragging) return;
+            isDragging = false;
+            
+            // 恢复正常样式
+            container.style.cursor = 'default';
+            container.style.transition = 'all 0.2s ease';
+            document.body.style.userSelect = 'auto';
+            
+            // 重置moveFlag
+            setTimeout(() => {
+                moveFlag = false;
+            }, 100);
+        }
+    
+        header.addEventListener('mousedown', handleDragStart);
+        document.addEventListener('mousemove', handleDrag);
+        document.addEventListener('mouseup', handleDragEnd);
+    
+        // 为最小化按钮也添加相同的拖拽逻辑
+        mini.addEventListener('mousedown', (e) => {
+            if (e.target.tagName.toLowerCase() === 'button') return;
+            isDragging = true;
+            
+            const rect = mini.getBoundingClientRect();
+            startX = e.clientX - rect.left;
+            startY = e.clientY - rect.top;
+            
+            mini.style.transition = 'none';
+            mini.style.cursor = 'move';
+            document.body.style.userSelect = 'none';
+            
+            e.preventDefault();
+        });
+    
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            moveFlag = true;
+            
+            let newX = e.clientX - startX;
+            let newY = e.clientY - startY;
+            
+            newX = Math.max(0, Math.min(newX, window.innerWidth - mini.offsetWidth));
+            newY = Math.max(0, Math.min(newY, window.innerHeight - mini.offsetHeight));
+            
+            mini.style.left = `${newX}px`;
+            mini.style.top = `${newY}px`;
+            
+            e.preventDefault();
+        });
+    
+        document.addEventListener('mouseup', () => {
+            if (!isDragging) return;
+            isDragging = false;
+            
+            mini.style.cursor = 'default';
+            mini.style.transition = 'all 0.2s ease';
+            document.body.style.userSelect = 'auto';
+            
+            setTimeout(() => {
+                moveFlag = false;
+            }, 100);
+        });
+        // 最小化功能
+        minimizeBtn.onclick = () => {
+            container.style.display = 'none';
+            mini.style.display = 'flex';
+        };
+    
+        mini.onclick = () => {
+            if (!moveFlag) {
+                container.style.display = 'block';
+                mini.style.display = 'none';
+            }
+        };
+    
         // 标签切换功能
         testTab.onclick = () => {
             testTab.style.background = '#1890ff';
@@ -298,7 +438,7 @@
             testInfoContent.style.display = 'block';
             logContent.style.display = 'none';
         };
-
+    
         logTab.onclick = () => {
             logTab.style.background = '#1890ff';
             logTab.style.color = 'white';
@@ -307,12 +447,12 @@
             testInfoContent.style.display = 'none';
             logContent.style.display = 'block';
         };
-
-        // 初始状态 - 修改这里，默认显示日志页面
+    
+        // 初始状态
         logTab.click();
-
+    
         document.body.appendChild(container);
-
+    
         return {
             container,
             testInfoContent,
@@ -456,7 +596,7 @@
                     const startBt = document.querySelector('#startArea #start-btn.start-exam');
                     if (startBtn || startBt) {
                         startBtn.click();
-                        startBtn.click();
+                        startBt.click();
                         console.log('点击开始答题按钮');
                     }
                 });
@@ -614,10 +754,7 @@
 
                 // 如果没有找到答案,使用随机选择
                 if(!answerSlect){
-                    console.log('未找到答案,使用随机答案');
-                    const randomIndex = Math.floor(Math.random() * options.length);
-                    options[randomIndex].click();
-                    console.log(`${questionType}已随机选择: ${options[randomIndex].value}`);
+                    console.log('未匹配到答案，请刷新一下页面重新作答');
                 }
             } else if (questionType === '多选') {
                 let answerSlect = false;
@@ -634,31 +771,12 @@
                 }
                 // 如果没有找到答案,使用随机选择
                 if(!answerSlect){
-                    console.log('未批配答案,使用随机答案');
-                    const selectedCount = Math.floor(Math.random() * 3) + 1;
-                    const shuffled = Array.from(options).sort(() => 0.5 - Math.random());
-                    for (let i = 0; i < selectedCount; i++) {
-                        shuffled[i].click();
-                        console.log(`多选已随机选择: ${shuffled[i].value}`);
-                    }
+                    console.log('未匹配到答案，请刷新一下页面重新作答');
                 }
             }
         } else {
-            console.log('未找到答案,使用随机答案');
+            console.log('未匹配到答案，请刷新一下页面重新作答');
 
-            // 如果没有找到答案,使用随机选择
-            if (questionType === '单选' || questionType === '判断') {
-                const randomIndex = Math.floor(Math.random() * options.length);
-                options[randomIndex].click();
-                console.log(`${questionType}已随机选择: ${options[randomIndex].value}`);
-            } else if (questionType === '多选') {
-                const selectedCount = Math.floor(Math.random() * 3) + 1;
-                const shuffled = Array.from(options).sort(() => 0.5 - Math.random());
-                for (let i = 0; i < selectedCount; i++) {
-                    shuffled[i].click();
-                    console.log(`多选已随机选择: ${shuffled[i].value}`);
-                }
-            }
         }
 
         const randomDelay = () => Math.floor(Math.random() * 2000) + 2000;
