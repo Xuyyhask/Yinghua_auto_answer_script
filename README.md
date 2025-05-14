@@ -65,7 +65,7 @@ url: `https://api.zaizhexue.top/api/query?token=12345678910&title=${encodeURICom
 - 可能在点击的时候，没有添加的延时的原因，可能会跳过一些题，但是到最后都会去完成的
 - 可能存在 “完成作业” 提交不上去的问题，进行 __网页刷新__ 即可解决
 
-# BACEKEND
+# BACKEND
 - 后端主要提供获得答案功能，如果觉得配后端麻烦，可以使用 https://zerror.neoregion.cn/ 提供的免费ai查询软件，或者使用他的在线题库（直接替换url就行了）。
 - 主要是参考 https://github.com/Miaozeqiu/ai-ocs-question_bank ，自己也就稍微修改了一下地方。
   
