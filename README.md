@@ -12,14 +12,27 @@
 - MySQL 5.7+（可选，支持无数据库模式）
 - Node.js（前端脚本开发）
 
-# 如何使用 Tampermonkey浏览器插件 （油猴插件）
+# 如何使用 Tampermonkey浏览器插件 （油猴插件）以 edge浏览器 为例
+- 第1步
+  
 ![第1步](./Photo/1.png) 
-
+- 第2步
+  
 ![第2步](./Photo/3.png) 
+- 第3步
+  
 ![第3步](./Photo/4.png) 
+- 第4步
+  
 ![第4步](./Photo/5.png) 
+- 第5步
+
 ![第5步](./Photo/6.png) 
+- 第6步
+  
 ![第6步](./Photo/7.png) 
+- 第7步
+  
 ![第7步](./Photo/8.png) 
 
 
