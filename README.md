@@ -1,3 +1,45 @@
+# 自动答题 无需搭建本地后端
+- frontend 文件里面的 non_backend文件
+  
+- 需要在浮窗配置自己的 百炼API_KEY
+
+## 如何获得百炼API_KEY
+- 第 1 步 进入 百炼官网 https://bailian.console.aliyun.com/
+
+- 第 2 步
+
+
+## 如何使用 Tampermonkey浏览器插件 （油猴插件）以 edge浏览器 为例
+- 第 1 步
+  
+![第1步](./Photo/1.png) 
+
+- 第 2 步
+  
+![第2步](./Photo/3.png) 
+
+- 第 3 步
+  
+![第3步](./Photo/4.png) 
+
+- 第 4 步
+  
+![第4步](./Photo/5.png) 
+
+- 第 5 步
+
+![第5步](./Photo/6.png) 
+
+- 第 6 步
+  
+![第6步](./Photo/7.png) 
+
+- 第 7 步
+  
+![第7步](./Photo/8.png) 
+
+
+
 # AI 智能题库系统 BOOTTOOLS
 
 ## 项目介绍
@@ -11,30 +53,6 @@
 - Python 3.8+
 - MySQL 5.7+（可选，支持无数据库模式）
 - Node.js（前端脚本开发）
-
-# 如何使用 Tampermonkey浏览器插件 （油猴插件）以 edge浏览器 为例
-- 第1步
-  
-![第1步](./Photo/1.png) 
-- 第2步
-  
-![第2步](./Photo/3.png) 
-- 第3步
-  
-![第3步](./Photo/4.png) 
-- 第4步
-  
-![第4步](./Photo/5.png) 
-- 第5步
-
-![第5步](./Photo/6.png) 
-- 第6步
-  
-![第6步](./Photo/7.png) 
-- 第7步
-  
-![第7步](./Photo/8.png) 
-
 
 # FRONTEND
 - 支持多个在线教育平台的自动答题脚本
