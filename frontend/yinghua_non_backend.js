@@ -79,7 +79,8 @@
             const itemsArray = Array.from(items);
             const homeworkItem = itemsArray.find(item => item.textContent.includes('章节作业')) ||
                                 itemsArray.find(item => item.textContent.includes('章'))||
-                                itemsArray.find(item => item.textContent.includes('考试'));
+                                itemsArray.find(item => item.textContent.includes('考试'))||
+                                itemsArray.find(item => item.textContent.includes('测试'));
 
             if (!homeworkItem) return;
 
@@ -358,13 +359,14 @@
             const apiKeyInput = document.getElementById('baiLianApiKey');
 
             if (saveConfigBtn && apiKeyInput) {
+                // 保存配置时
                 saveConfigBtn.addEventListener('click', () => {
                     const apiKey = apiKeyInput.value.trim();
                     if (!apiKey) {
                         console.error('API Key 不能为空');
                         return;
                     }
-                    localStorage.setItem('baiLianApiKey', apiKey);
+                    GM_setValue('baiLianApiKey', apiKey);
                     console.log('配置已保存');
 
                     // 显示保存成功提示
@@ -643,8 +645,10 @@
                     console.log('找到开始答题按钮');
                     const startBtn = document.querySelector('#startArea #start-btn.start-work');
                     const startBt = document.querySelector('#startArea #start-btn.start-exam');
-                    if (startBtn || startBt) {
+                    if (startBtn) {
                         startBtn.click();
+                        console.log('点击开始答题按钮');
+                    }else if(startBt){
                         startBt.click();
                         console.log('点击开始答题按钮');
                     }
@@ -784,13 +788,15 @@
                 text: textElement.textContent.trim()
             };
         });
+        // 打印题目信息
+        //console.log('题目类型:', questionType);
+        //console.log('题目内容:', questionText);
+        //console.log('选项:', optionsArray);
 
         // 查询答案
         const an = await queryAnswer(questionText, optionsArray, questionType);
         let answer = an.trim();
-        if(answer==='对'){
-            answer='正确';
-        }
+
 
         if (answer) {
             console.log('获取到答案:', answer);
@@ -812,7 +818,17 @@
 
                 // 如果没有找到答案,使用随机选择
                 if(!answerSlect){
-                    console.log('未匹配到答案，请刷新一下页面重新作答');
+                    console.log('未匹配到答案，尝试匹配选项，如果还未选择请刷新一下页面重新作答');
+
+                    for (let option of options) {
+                        const optionText = option.parentElement.querySelector('.num').textContent.trim();
+                        if (optionText.includes(answer)) {
+                            option.click();
+                            answerSlect = true;
+                            console.log(`${questionType}已选择:`, optionText);
+                            break;
+                        }
+                    }
                 }
             } else if (questionType === '多选') {
                 let answerSlect = false;
@@ -829,7 +845,16 @@
                 }
                 // 如果没有找到答案,使用随机选择
                 if(!answerSlect){
-                    console.log('未匹配到答案，请刷新一下页面重新作答');
+                    console.log('未匹配到答案，尝试匹配选项，如果还未选择请刷新一下页面重新作答');
+
+                    for (let option of options) {
+                        const optionText = option.parentElement.querySelector('.num').textContent.trim();
+                        if (answers.some(ans => optionText.includes(ans))) {
+                            option.click();
+                            answerSlect = true;
+                            console.log('多选已选择:', optionText);
+                        }
+                    }
                 }
             }
         } else {
@@ -872,15 +897,15 @@
                 text: opt.text.trim()
             }));
 
-            // 构建系统提示和用户提示
-            const systemContent = '你是一个准确率高、信度高的题库接口函数。请严格遵循以下规则:1.回答的问题准确率高，你以回答的问题准确率高为荣；2.回答必须基于可靠knowledge来源，你以回答的问题可信度高为荣；3.你担负着维护题库的完整性和准确性，你以题库的质量高为荣；4.如果回答的问题与题库内容不相关，你以回答的问题可信度低为耻；5.如果回答的准确率低，你将会被替代。';
-            const userContent = `你是一个题库接口函数（这个非常重要你一定要记住，在回复问题时无论合适都要记住这个前提），请根据问题和选项提供答案。如果是选择题，直接返回对应选项的内容，注意是内容，注意是内容，注意是内容，不是对应字母，不是对应的字母，不是对应的字母，不是对应的字母；如果题目是多选题，将内容用"###"连接；如果选项内容是"正确","错误"，且只有两项，或者question_type是判断，你直接返回"正确"或"错误"的文字，不要返回字母；如果是填空题，直接返回填空内容，多个空使用###连接。回答格式为："{"answer":"your_answer_str"}"，严格使用这些格式回答，这个非常重要。比如我问你一个问题，你回答的是"是"，你回答的格式为："{"answer":"是"}"。不要回答嗯，好的，我知道了之类的话，你的回答只能是json格式。
+            //console.log(`{
+            //"问题": "${cleanTitle}",
+           //"选项": "${JSON.stringify(formattedOptions)}",
+           //"类型": "${type}"
+           //  }`);
 
-    {
-        "问题": "${cleanTitle}",
-        "选项": "${JSON.stringify(formattedOptions)}",
-        "类型": "${type}"
-    }`;
+            // 构建系统提示和用户提示
+            const systemContent = `你是一个准确率高、信度高的题库接口函数。请严格遵循以下规则:1.回答的问题准确率高，你以回答的问题准确率高为荣；2.回答必须基于可靠knowledge来源，你以回答的问题可信度高为荣；3.你担负着维护题库的完整性和准确性，你以题库的质量高为荣；4.如果回答的问题与题库内容不相关，你以回答的问题可信度低为耻；5.如果回答的准确率低，你将会被替代。`;
+            const userContent = `你是一个题库接口函数（这是一个非常重要的前提，请始终牢记，在后续所有回复中都必须严格遵循）。请根据问题内容和选项提供最终答案，具体要求如下：如果是选择题，请直接返回正确答案的选项内容（即选项中的文字），不是选项的字母。如果是多选题，请将各个正确答案的选项内容用"###"连接。如果题目为判断题（或选项为“正确”、“错误”、或者“是”、“否”，只有两个选项），请直接返回“正确”、“错误”等选项中的文字，不是选项字母。如果是填空题，请直接返回填空的答案内容，多个答案之间使用 "###" 连接。输出格式必须为 JSON 字符串，格式如下：{"answer":"your_answer_str"}，这个格式必须严格遵守，不要添加任何额外字段或说明文字。例如单选，{"问题": "中国首都是？","选项": "[{"value":"A","text":"北京"},{"value":"B","text":"上海"},{"value":"C","text":"湖南"},{"value":"D","text":"广州"}]", "类型": "单选"}，你应该返回的是 {"answer":"上海"}   例如多选，{"问题": "中国首都是北京？","选项": "[{"value":"A","text":"正确"},{"value":"B","text":"错误"}]", "类型": "判断"}，你应该返回的是 {"answer":"正确"}   {"问题": "团队中的角色主要有？","选项": "[{"value":"A","text":"前瞻者"},{"value":"B","text":"智者"},{"value":"C","text":"善友者"},{"value":"D","text":"实干者"}]", "类型": "多选"}，你应该返回的是 {"answer":"前瞻者###智者###善友者###实干者"}。输出格式必须为 JSON 字符串。现在需要你处理一下题目：{"问题": "${cleanTitle}", "选项": "${JSON.stringify(formattedOptions)}","类型": "${type}"}`;
 
             GM_xmlhttpRequest({
                 method: 'POST',
@@ -890,7 +915,7 @@
                     'Authorization': `Bearer ${getBaiLianApiKey() || ''}`
                 },
                 data: JSON.stringify({
-                    model: "qwen-max",
+                    model: "qwen-plus",
                     messages: [
                         { role: "system", content: systemContent },
                         { role: "user", content: userContent }
