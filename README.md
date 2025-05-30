@@ -1,7 +1,9 @@
-# AI自动答题 （无需搭建本地后端）BOOTTOOLS
+# AI自动答题 （无需搭建本地后端）BOTTOOLS
 - frontend 文件里面的 non_backend文件
 - 需要在浮窗配置自己的 百炼API_KEY
-- 如需修改调用模型直接去 __代码893行__ 切换模型（默认使用 qwen-max）
+- 如需修改调用模型直接去 __代码893行__ 切换模型（默认使用 qwen-plus）
+> 如需英华刷课去这个链接 https://github.com/aoaostar/mooc/releases/tag/v1.3.2
+
 ### 如何获得百炼API_KEY
 - 第 1 步 进入 百炼官网 https://bailian.console.aliyun.com/
 
@@ -43,7 +45,7 @@
 
 ##
 ## 
-# AI自动答题（需要搭建后端） BOOTTOOLS
+# AI自动答题（需要搭建后端） BOTTOOLS
 
 ### 1.项目介绍
 这是一个基于前后端分离架构的智能题库系统，包含多平台自动答题脚本和智能答案查询API服务。系统支持多种AI模型（火山引擎/阿里百炼/硅基引擎）自动回答问题，并提供高效的答案缓存和查询服务。
