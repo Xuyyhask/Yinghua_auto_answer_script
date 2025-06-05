@@ -93,6 +93,7 @@ url: `http://127.0.0.1:5000/api/query?title=${encodeURIComponent(question)}&opti
 - 第 4 步
 ![第4步](./photo/5.png) 
 - 第 5 步
+
 ![第5步](./photo/6.png) 
 - 第 6 步
 ![第6步](./photo/7.png) 
@@ -127,12 +128,15 @@ url: `http://127.0.0.1:5000/api/query?title=${encodeURIComponent(question)}&opti
 - 第 1 步 点击链接 https://github.com/aoaostar/mooc/releases/tag/v1.3.2 ，根据自己的配置下载 
 
 ![1](./photo/sk1.png)
+
 - 第 2 步 下载解压缩打开文件 （以windos为例），点击 config.json 文件进行配置 
 
 ![2](./photo/sk2(1).png)
+
 - 第 3 步 根据图片修改一下配置，base_url 为需要刷课的网址， username 为账号， password 为密码， 根据自己情况配置 
 
 ![3](./photo/sk3.png)
+
 - 第 4 步 点击 运行 即是运行， 结束， 即是结束。 
 
 ![4](./photo/sk2(2).png)
