@@ -78,6 +78,8 @@
 
             const itemsArray = Array.from(items);
             const homeworkItem = itemsArray.find(item => item.textContent.includes('章节作业')) ||
+                                itemsArray.find(item => item.textContent.includes('作业')) ||
+                                itemsArray.find(item => item.textContent.includes('测试')) ||
                                 itemsArray.find(item => item.textContent.includes('章'))||
                                 itemsArray.find(item => item.textContent.includes('考试'));
 
